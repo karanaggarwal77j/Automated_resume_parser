@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Resume Parser</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            margin: 0;
+            padding: 25px;
+            color: #202b3c;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        h1 { color: #173c73; }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        input, button {
+            padding: 11px;
+            margin: 5px 0;
+            border: 1px solid #ccd3df;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #2058a5;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover { background: #173c73; }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 650px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e5e9f0;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th { background: #eef3fa; }
+
+        .message {
+            padding: 10px;
+            background: #e8f3ff;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Automated Resume Parser</h1>
+    <p>Extract, organize and search candidate information.</p>
+
+    <div class="card">
+        <h2>Upload Resume</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% for message in messages %}
+            <p class="message">{{ message }}</p>
+          {% endfor %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="resume"
+                   accept=".pdf,.docx" required>
+            <button type="submit">Upload and Parse</button>
+        </form>
+
+        <small>Supported formats: PDF and DOCX. Maximum size: 5 MB.</small>
+    </div>
+
+    <div class="card">
+        <h2>Search Candidates</h2>
+
+        <form method="GET">
+            <input type="text" name="q"
+                   value="{{ query }}"
+                   placeholder="Search by name, skill or education">
+            <button type="submit">Search</button>
+            <a href="/">Show All</a>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Candidate Database</h2>
+
+        <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Education</th>
+                    <th>Skills</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for candidate in candidates %}
+                <tr>
+                    <td>{{ candidate["name"] or "Not detected" }}</td>
+                    <td>{{ candidate["email"] or "Not detected" }}</td>
+                    <td>{{ candidate["phone"] or "Not detected" }}</td>
+                    <td>{{ candidate["education"] or "Not detected" }}</td>
+                    <td>{{ candidate["skills"] or "Not detected" }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">No candidates found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
